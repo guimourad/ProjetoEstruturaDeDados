@@ -2,31 +2,34 @@
 #include <stdlib.h>
 #include <time.h>
 
+// Função de ordenação Selection Sort
 void selectionSort(int array[], int tamanho)
 {
     for (int i = 0; i < tamanho - 1; i++)
     {
-        int minIndex = i;
+        int minIndex = i; // Define o índice do menor valor como o índice atual
         for (int j = i + 1; j < tamanho; j++)
         {
             if (array[j] < array[minIndex])
-            {
+            { // Verifica se encontrou um valor menor
                 minIndex = j;
             }
         }
-        // Troca o menor elemento com o elemento da posição atual
+        // Troca o menor elemento encontrado com o elemento da posição atual
         int temp = array[minIndex];
         array[minIndex] = array[i];
         array[i] = temp;
     }
 }
 
+// Função de ordenação Insertion Sort
 void insertionSort(int array[], int tamanho)
 {
     for (int i = 1; i < tamanho; i++)
     {
         int key = array[i];
         int j = i - 1;
+        // Move os elementos que são maiores que key uma posição à frente
         while (j >= 0 && array[j] > key)
         {
             array[j + 1] = array[j];
@@ -36,6 +39,7 @@ void insertionSort(int array[], int tamanho)
     }
 }
 
+// Função de ordenação Bubble Sort
 void bubbleSort(int array[], int tamanho)
 {
     for (int i = 0; i < tamanho - 1; i++)
@@ -44,6 +48,7 @@ void bubbleSort(int array[], int tamanho)
         {
             if (array[j] > array[j + 1])
             {
+                // Troca elementos adjacentes se estão na ordem errada
                 int temp = array[j];
                 array[j] = array[j + 1];
                 array[j + 1] = temp;
@@ -52,6 +57,7 @@ void bubbleSort(int array[], int tamanho)
     }
 }
 
+// Função auxiliar para o Merge Sort: junta duas metades ordenadas de um array
 void merge(int array[], int inicio, int meio, int fim)
 {
     int n1 = meio - inicio + 1;
@@ -59,12 +65,14 @@ void merge(int array[], int inicio, int meio, int fim)
 
     int esquerda[n1], direita[n2];
 
+    // Copia os dados para os arrays temporários esquerda[] e direita[]
     for (int i = 0; i < n1; i++)
         esquerda[i] = array[inicio + i];
     for (int j = 0; j < n2; j++)
         direita[j] = array[meio + 1 + j];
 
     int i = 0, j = 0, k = inicio;
+    // Junta os arrays temporários de volta ao array principal
     while (i < n1 && j < n2)
     {
         if (esquerda[i] <= direita[j])
@@ -80,12 +88,15 @@ void merge(int array[], int inicio, int meio, int fim)
         k++;
     }
 
+    // Copia os elementos restantes de esquerda[], se houver
     while (i < n1)
     {
         array[k] = esquerda[i];
         i++;
         k++;
     }
+
+    // Copia os elementos restantes de direita[], se houver
     while (j < n2)
     {
         array[k] = direita[j];
@@ -94,20 +105,24 @@ void merge(int array[], int inicio, int meio, int fim)
     }
 }
 
+// Função de ordenação Merge Sort
 void mergeSort(int array[], int inicio, int fim)
 {
     if (inicio < fim)
     {
         int meio = inicio + (fim - inicio) / 2;
+        // Divide o array em duas metades e ordena recursivamente
         mergeSort(array, inicio, meio);
         mergeSort(array, meio + 1, fim);
+        // Junta as duas metades ordenadas
         merge(array, inicio, meio, fim);
     }
 }
 
+// Função auxiliar para o Quick Sort: particiona o array
 int partition(int array[], int inicio, int fim)
 {
-    int pivot = array[fim];
+    int pivot = array[fim]; // Escolhe o último elemento como pivô
     int i = inicio - 1;
 
     for (int j = inicio; j < fim; j++)
@@ -127,28 +142,34 @@ int partition(int array[], int inicio, int fim)
     return i + 1;
 }
 
+// Função de ordenação Quick Sort
 void quickSort(int array[], int inicio, int fim)
 {
     if (inicio < fim)
     {
         int pi = partition(array, inicio, fim);
+        // Ordena os elementos antes e depois da partição
         quickSort(array, inicio, pi - 1);
         quickSort(array, pi + 1, fim);
     }
 }
 
+// Função auxiliar para o Heap Sort: ajusta o array para manter a propriedade de heap
 void heapify(int array[], int tamanho, int i)
 {
     int maior = i;
     int esquerda = 2 * i + 1;
     int direita = 2 * i + 2;
 
+    // Se o filho da esquerda é maior que o nó atual
     if (esquerda < tamanho && array[esquerda] > array[maior])
         maior = esquerda;
 
+    // Se o filho da direita é maior que o nó atual
     if (direita < tamanho && array[direita] > array[maior])
         maior = direita;
 
+    // Se o maior não é o nó atual, troca e continua ajustando
     if (maior != i)
     {
         int temp = array[i];
@@ -158,16 +179,20 @@ void heapify(int array[], int tamanho, int i)
     }
 }
 
+// Função de ordenação Heap Sort
 void heapSort(int array[], int tamanho)
 {
+    // Constrói o heap (reorganiza o array)
     for (int i = tamanho / 2 - 1; i >= 0; i--)
         heapify(array, tamanho, i);
 
+    // Extrai um elemento do heap por vez
     for (int i = tamanho - 1; i > 0; i--)
     {
         int temp = array[0];
         array[0] = array[i];
         array[i] = temp;
+        // Chama heapify na raiz do heap reduzido
         heapify(array, i, 0);
     }
 }
@@ -187,9 +212,9 @@ void medeTempoExecucao(void (*algoritmo)(int[], int), int arr[], int tamanho, co
     int arr_copia[tamanho];
     copiaArray(arr, arr_copia, tamanho); // Copia o array original para não alterar o original
 
-    clock_t inicio = clock();
+    clock_t inicio = clock();      // Inicia a contagem do tempo
     algoritmo(arr_copia, tamanho); // Chama o algoritmo de ordenação
-    clock_t fim = clock();
+    clock_t fim = clock();         // Termina a contagem do tempo
 
     double tempo_cpu = ((double)(fim - inicio)) / CLOCKS_PER_SEC;
     printf("%s para %d elementos: %f segundos\n", nome, tamanho, tempo_cpu);
@@ -200,7 +225,7 @@ void preencheArrayAleatorio(int arr[], int tamanho)
 {
     for (int i = 0; i < tamanho; i++)
     {
-        arr[i] = rand();
+        arr[i] = rand(); // Gera números aleatórios para preencher o array
     }
 }
 
